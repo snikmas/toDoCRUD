@@ -22,13 +22,8 @@
       <ul class="taskList">
         <% for (const task of tasks) { %>
           <li>
-            <% if (!task.status) { %>
-              <input type="checkbox" class="isDone uncompleted" name="uncompleted" checked>
-              <%= task.taskName %>
-            <% } else { %>
-              <input type="checkbox" class="isDone completed" name="completed" checked>
-              <%= task.taskName %>
-            <% } %>
+            <input type="checkbox" class="isDone <%= task.status ? 'completed' : 'uncompleted' %>" data-id="<%= task._id%>" <%= task.status ? 'checked' : '' %>>
+            <%= task.taskName %>
             <button data-id="<%= task._id %>" class="delete">Delete</button>
           </li>
         <% } %>

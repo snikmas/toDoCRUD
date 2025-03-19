@@ -70,17 +70,17 @@ function createServer(tasks){
       //   await changeStatusTask(req, res, false, tasks);
       // });
       
-      app.get('/', async (req, res) => {
-        
-        try{
-          // first: need to get data from the db
-          const tasksArray = await tasks.find().toArray()
-          console.log(tasksArray);
-          
-          // rendering EJS, pass it
-          res.render('index.ejs', { tasks: tasksArray});
-        } catch(err){
-          console.error("Error during get request: ", err);
+  app.get('/', async (req, res) => {
+    
+    try{
+      // first: need to get data from the db
+      const tasksArray = await tasks.find().toArray()
+      // console.log(tasksArray);
+      
+      // rendering EJS, pass it
+      res.render('index.ejs', { tasks: tasksArray});
+      } catch(err){
+      console.error("Error during get request: ", err);
     }
   })
 
@@ -102,7 +102,7 @@ function createServer(tasks){
 
     try {
       //getthe object
-      console.log(req.body.taskId)
+      // console.log(req.body.taskId)
       const task = await tasks.deleteOne({_id: new ObjectId(req.body.taskId)});
       // thats.. why we use json? -> for output in the console
       res.json("deleted")

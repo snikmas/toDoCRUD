@@ -8,25 +8,21 @@ checkbox.forEach((btn) => {
   btn.addEventListener('change', changeStatus)
 })
 
-function getId(data){
-  // const taskLi = data.closest("li");
-  return data.getAttribute('data-id');
-}
-
 async function changeStatus(){
   try{
-    const taskId = getId(this.closest('li'));
+    const taskId = this.getAttribute('data-id');
     const isChecked = this.checked;
-
-    const newStatus = isChecked?  'false':'true';
+    console.log(taskId, 'ha')
+    
+    const newStatus = isChecked ?  'true':'false';
     
     const result = await fetch('/updateTask', {
-        method: "put",
-          headers: {'Content-Type': "application/json"},
-          body: JSON.stringify({taskId, status: newStatus})
-        })
-  
-
+      method: "put",
+      headers: {'Content-Type': "application/json"},
+      body: JSON.stringify({taskId, status: newStatus})
+    })
+    
+    
     console.log("change status main")
     
     this.value = newStatus;
@@ -35,13 +31,11 @@ async function changeStatus(){
     console.error("erorr in the changing status: ", error);
   }
 }
-  
-  async function deleteTask(){
+
+async function deleteTask(){
     
-  let taskLi = this.closest("li");
-  // console.log(taskLi) // got it
-  
-  let taskId = getId(taskLi);
+  let taskId = this.getAttribute('data-id');
+  console.log(taskId)
     // this.getAttribute('data-id');
 
 
@@ -54,7 +48,7 @@ async function changeStatus(){
   });
 
   if (result.ok){
-    taskLi.remove();
+    this.closest('li').remove();
     console.log("deleted from the db")
   } else {
     const error = await result.json();
