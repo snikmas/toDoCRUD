@@ -29,6 +29,7 @@ function createServer(tasks){
   app.use(express.urlencoded({extended: true}))
   app.set("view engine", 'ejs');
   app.use(express.json());
+  app.use(express.static('public'))
   
 
   app.get('/', async (req, res) => {
@@ -36,7 +37,7 @@ function createServer(tasks){
     try{
       // firstly: need to get data from the db
       const tasksArray = await tasks.find().toArray()
-      console.log(tasksArray);
+      // console.log(tasksArray);
 
       // rendering EJS, pass in task data
       res.render('index.ejs', { tasks: tasksArray});
@@ -57,6 +58,17 @@ function createServer(tasks){
     } catch(err){
       console.error("Error during post: ", err);
     }
+  })
+
+  app.delete("/deleteTask", async(req, res) => {
+
+    //getting the object
+    const task = await tasks.deleteOne({_id: req.body._id});
+
+    // thats.. why we use json?
+    res.json("no problem")
+
+    res.redirect('/');
   })
 
   
