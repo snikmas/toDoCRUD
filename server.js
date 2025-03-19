@@ -1,8 +1,9 @@
 import express, { urlencoded } from "express"
-import {MongoClient} from "mongodb"
+import {MongoClient, ObjectId} from "mongodb"
 import dotenv from "dotenv";
 
 dotenv.config(); // Load environment variables
+
 
 const app = express();
 const PORT = process.env.PORT || 3000
@@ -23,6 +24,29 @@ async function connectToDb(){
   }
 }
 
+async function changeStatusTask(req, res, status, tasks){
+  try {
+    console.log(`status: ${req.body.taskId}`)
+    
+    const boolStatus = status === "true" || status === true
+
+    const result = await tasks.updateOne({
+      _id: new ObjectId(req.body.taskId),
+    }, {
+      $set: {
+        status: boolStatus,
+      }
+    });
+
+    console.log('hi from change status')
+    res.json(`marked: ${status ? 'true' : "false"}`)
+  } catch(err){
+    console.error(
+      console.error('failed')
+    )
+  }
+}
+
 
 function createServer(tasks){
   
@@ -32,17 +56,31 @@ function createServer(tasks){
   app.use(express.static('public'))
   
 
-  app.get('/', async (req, res) => {
+  app.put('/updateTask', async(req, res) => {
+    const {taskId, status} = req.body
+    await changeStatusTask(req, res,  status, tasks)
+    console.log(await tasks.find().toArray())
+  })
+  
+  // app.put('/markTrue', async (req, res) => {
+    //   await changeStatusTask(req, res, true, tasks);
+    // });
     
-    try{
-      // firstly: need to get data from the db
-      const tasksArray = await tasks.find().toArray()
-      // console.log(tasksArray);
-
-      // rendering EJS, pass in task data
-      res.render('index.ejs', { tasks: tasksArray});
-    } catch(err){
-      console.error("Error during get request: ", err);
+    // app.put('/markFalse', async(req, res) => {
+      //   await changeStatusTask(req, res, false, tasks);
+      // });
+      
+      app.get('/', async (req, res) => {
+        
+        try{
+          // first: need to get data from the db
+          const tasksArray = await tasks.find().toArray()
+          console.log(tasksArray);
+          
+          // rendering EJS, pass it
+          res.render('index.ejs', { tasks: tasksArray});
+        } catch(err){
+          console.error("Error during get request: ", err);
     }
   })
 
@@ -62,13 +100,17 @@ function createServer(tasks){
 
   app.delete("/deleteTask", async(req, res) => {
 
-    //getting the object
-    const task = await tasks.deleteOne({_id: req.body._id});
-
-    // thats.. why we use json?
-    res.json("no problem")
-
-    res.redirect('/');
+    try {
+      //getthe object
+      console.log(req.body.taskId)
+      const task = await tasks.deleteOne({_id: new ObjectId(req.body.taskId)});
+      // thats.. why we use json? -> for output in the console
+      res.json("deleted")
+    } catch(err){
+      console.error("Error in the delete: ", err)
+    }
+    
+    
   })
 
   
