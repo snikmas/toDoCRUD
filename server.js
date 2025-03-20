@@ -7,7 +7,6 @@ dotenv.config(); // Load environment variables
 
 const app = express();
 const PORT = process.env.PORT || 3000
-// const __dirname = import.meta.dirname //? what is meta
 const MB_CONNECTION_STRING = process.env.MB_CONNECTION_STRING;
 
 
@@ -20,7 +19,7 @@ async function connectToDb(){
     return tasks //return a collection
     
   } catch(err) {
-    console.error("Erro during connectingToDb: ", err);
+    console.error("Error in the connectingToDb: ", err);
   }
 }
 
@@ -28,7 +27,7 @@ async function changeStatusTask(req, res, status, tasks){
   try {
     console.log(`status: ${req.body.taskId}`)
     
-    const boolStatus = status === "true" || status === true
+    const boolStatus = status === "true" || status === true;
 
     const result = await tasks.updateOne({
       _id: new ObjectId(req.body.taskId),
@@ -38,7 +37,7 @@ async function changeStatusTask(req, res, status, tasks){
       }
     });
 
-    console.log('hi from change status')
+    // console.log('hi from change status')
     res.json(`marked: ${status ? 'true' : "false"}`)
   } catch(err){
     console.error(
@@ -61,14 +60,6 @@ function createServer(tasks){
     await changeStatusTask(req, res,  status, tasks)
     console.log(await tasks.find().toArray())
   })
-  
-  // app.put('/markTrue', async (req, res) => {
-    //   await changeStatusTask(req, res, true, tasks);
-    // });
-    
-    // app.put('/markFalse', async(req, res) => {
-      //   await changeStatusTask(req, res, false, tasks);
-      // });
       
   app.get('/', async (req, res) => {
     
@@ -101,10 +92,10 @@ function createServer(tasks){
   app.delete("/deleteTask", async(req, res) => {
 
     try {
-      //getthe object
+      //get the object
       // console.log(req.body.taskId)
       const task = await tasks.deleteOne({_id: new ObjectId(req.body.taskId)});
-      // thats.. why we use json? -> for output in the console
+      // thats.. why we use json? -> for output
       res.json("deleted")
     } catch(err){
       console.error("Error in the delete: ", err)

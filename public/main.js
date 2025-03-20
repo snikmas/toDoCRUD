@@ -36,14 +36,12 @@ async function deleteTask(){
     
   let taskId = this.getAttribute('data-id');
   console.log(taskId)
-    // this.getAttribute('data-id');
-
 
   // send a request to the db
   const result = await fetch ('/deleteTask', {
     method: 'delete',
     headers: {'Content-Type': 'application/json'},
-    // we send name and delete it by id on the server
+    // we send a name and delete it by id on the server
     body: JSON.stringify({taskId})
   });
 
